@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs</title>
+    <link rel="stylesheet" href="user.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestion des Utilisateurs</h1>
+        <form id="userForm">
+            <h2 id="formTitle">Ajouter un Utilisateur</h2>
+            <input type="hidden" id="userId">
+            
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" placeholder="Entrez le nom" required>
+            
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" placeholder="Entrez le prénom" required>
+            
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Entrez l'email" required>
+            
+            <label for="role">Rôle</label>
+            <select id="role" required>
+                <option value="etudiant">Étudiant</option>
+                <option value="professeur">Professeur</option>
+                <option value="admin">Admin</option>
+            </select>
+            
+            <label for="specialite">Spécialité</label>
+            <input type="text" id="specialite" placeholder="Entrez la spécialité" required>
+            
+            <label for="date_creation">Date de Création</label>
+            <input type="date" id="date_creation" required>
+            
+            <button type="submit">Ajouter</button>
+        </form>
+        
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Spécialité</th>
+                    <th>Date de Création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les lignes seront ajoutées dynamiquement ici -->
+            </tbody>
+        </table>
+    </div>
+    <script src="user.js"></script>
+</body>
+</html>

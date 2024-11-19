@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Commandes</title>
+    <link rel="stylesheet" href="commande.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestion des Commandes</h1>
+        <form id="commandeForm">
+            <h2 id="formTitle">Ajouter une Commande</h2>
+            <input type="hidden" id="commandeId">
+            <label for="cour_id">Cours ID</label>
+            <input type="number" id="cour_id" placeholder="Entrez le ID du cours" required>
+            
+            <label for="etudiant_id">Étudiant ID</label>
+            <input type="number" id="etudiant_id" placeholder="Entrez le ID de l'étudiant" required>
+            
+            <label for="statut">Statut</label>
+            <select id="statut" required>
+                <option value="en attente">En attente</option>
+                <option value="paye">Payé</option>
+                <option value="annule">Annulé</option>
+            </select>
+            
+            <label for="date_commande">Date de Commande</label>
+            <input type="date" id="date_commande" required>
+            
+            <button type="submit">Ajouter</button>
+        </form>
+        
+        <table id="commandeTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cours ID</th>
+                    <th>Étudiant ID</th>
+                    <th>Statut</th>
+                    <th>Date de Commande</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les lignes seront ajoutées dynamiquement ici -->
+            </tbody>
+        </table>
+    </div>
+    <script src="commande.js"></script>
+</body>
+</html>
