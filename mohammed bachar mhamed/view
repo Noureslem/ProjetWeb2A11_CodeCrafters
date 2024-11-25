@@ -1,0 +1,12 @@
+<h1>{{ $course->title }}</h1>
+<p>Enseignant : {{ $course->teacher->name }}</p>
+<p>Description : {{ $course->description }}</p>
+
+@if($isEnrolled)
+    <a href="{{ route('courses.content', $course->id) }}">Accéder au contenu</a>
+@else
+    <form action="{{ route('courses.enroll', $course->id) }}" method="POST">
+        @csrf
+        <button type="submit">S'inscrire</button>
+    </form>
+@endif
