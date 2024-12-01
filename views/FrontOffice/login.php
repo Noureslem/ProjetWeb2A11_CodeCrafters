@@ -17,6 +17,6 @@
         
         <input type="submit" value="Login">
     </form>
-    <a href="signup.html">Don't have an account? Sign Up</a>
+    <a href="./signup.php">Don't have an account? Sign Up</a>
 </body>
 </html>
