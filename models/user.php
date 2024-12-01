@@ -7,8 +7,8 @@ class User {
     private ?string $dateOfBirth;
     private ?string $password;
     private ?string $role;
+    private ?string $phoneNumber;
 
-    // Constructeur
     public function __construct(
         string $firstName, 
         string $lastName, 
@@ -16,6 +16,7 @@ class User {
         string $dateOfBirth, 
         string $password, 
         string $role, 
+        ?string $phoneNumber = null,
         ?string $idUser = null
     ) {
         $this->idUser = $idUser;
@@ -25,9 +26,9 @@ class User {
         $this->dateOfBirth = $dateOfBirth;
         $this->password = $password;
         $this->role = $role;
+        $this->phoneNumber = $phoneNumber;
     }
 
-    // Getters et setters
     public function getIdUser(): ?string {
         return $this->idUser;
     }
@@ -75,6 +76,13 @@ class User {
     }
     public function setRole(string $role): void {
         $this->role = $role;
+    }
+    public function getPhoneNumber(): ?string {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): void {
+        $this->phoneNumber = $phoneNumber;
     }
 }
 ?>
