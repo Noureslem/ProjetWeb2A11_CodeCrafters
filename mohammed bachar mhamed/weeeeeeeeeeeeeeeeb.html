@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Réclamation</title>
+
+    <style>
+        /* Style général */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select {
+            background-color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .progress-bar {
+            background-color: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress {
+            height: 8px;
+            width: 0;
+            background-color: #4CAF50;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .dynamic-field {
+            display: none;
+        }
+
+        .dynamic-field.active {
+            display: block;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .form-buttons button {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .form-buttons .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .form-buttons .reset-btn {
+            background-color: #ccc;
+            color: #333;
+        }
+
+        .form-buttons button:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .confirmation-message {
+            display: none;
+            color: green;
+            font-weight: bold;
+            text-align: center;
+        }
+        .nav{
+            display: flex;
+            
+        }
+        .nav li{
+            margin: 20px;
+        }
+        
+
+    </style>
+</head>
+<body>
+    <header>
+        <header>
+            <h1>Bienvenue sur notre plateforme de cours en ligne</h1>
+            <nav>
+                <ul class="nav">
+                    <li><a href="#home">Accueil</a></li>
+                    <li><a href="#courses">Cours</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#reclamation">Reclamation</a></li>
+                </ul>
+            </nav>
+        </header>
+
+    </header>
+    <main>
+        <section>
+            <h2>Soumettez votre réclamation</h2>
+            <p>Veuillez utiliser ce formulaire pour signaler tout problème ou toute préoccupation liée à nos services éducatifs.</p>
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            <form id="reclamation-form">
+                <!-- Nom -->
+                <label for="name">Nom complet :</label>
+                <input type="text" id="name" name="name" placeholder="Votre nom complet" required>
+
+                <label for="Id">Identifiant :</label>
+                <input type="text" id="Id" name="Id" placeholder="Votre identifiant" required>
+
+                <!-- Email -->
+                <label for="email">Email :</label>
+                <input type="email" id="email" name="email" placeholder="Votre email" required>
+
+                <!-- Sélecteur de type -->
+                <label for="type">Type de réclamation :</label>
+                <select id="type" name="type" required>
+                    <option value="" disabled selected>-- Sélectionnez --</option>
+                    <option value="cours">Problème avec un cours</option>
+                    <option value="paiement">Problème de paiement</option>
+                    <option value="technique">Problème technique</option>
+                    <option value="autre">Autre</option>
+                </select>
+
+                <!-- Champs dynamiques -->
+                <div id="dynamic-fields">
+                    <div id="cours-details" class="dynamic-field">
+                        <label for="cours-name">Nom du cours :</label>
+                        <input type="text" id="cours-name" name="cours-name" placeholder="Nom du cours">
+                    </div>
+
+                    <div id="paiement-details" class="dynamic-field">
+                        <label for="transaction-id">ID de transaction :</label>
+                        <input type="text" id="transaction-id" name="transaction-id" placeholder="Numéro de transaction">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <label for="message">Description :</label>
+                <textarea id="message" name="message" placeholder="Décrivez votre réclamation" rows="6" required></textarea>
+
+                <!-- Priorité -->
+                <label>Priorité :</label>
+                <div class="checkbox-group">
+                    <label><input type="radio" name="priority" value="enseignant" required> Enseignant</label>
+                    <label><input type="radio" name="priority" value="etudiant"> Etudiant</label>
+                
+                </div>
+                
+                <!-- Consentement -->
+                <div>
+                    <label><input type="checkbox" name="consent" required> J'accepte les termes et conditions</label>
+                </div>
+                
+                <!-- Boutons -->
+                <div class="form-buttons">
+                    <button type="reset" class="reset-btn">Réinitialiser</button>
+                    <button type="button" class="submit-btn" id="submit-btn">Envoyer</button>
+                </div>
+            </form>
+            <p class="confirmation-message" id="confirmation-message">Votre réclamation a été envoyée avec succès !</p>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024-2025 Plateforme Éducative - Tous droits réservés.</p>
+       
+    </footer>
+
+    <script>
+        const form = document.getElementById('reclamation-form');
+        const typeField = document.getElementById('type');
+        const dynamicFields = document.getElementById('dynamic-fields');
+        const progressBar = document.getElementById('progress-bar');
+        const submitBtn = document.getElementById('submit-btn');
+        const confirmationMessage = document.getElementById('confirmation-message');
+
+        // Mise à jour des champs dynamiques
+        typeField.addEventListener('change', () => {
+            const selectedValue = typeField.value;
+
+            document.querySelectorAll('.dynamic-field').forEach(field => {
+                field.classList.remove('active');
+            });
+
+            if (selectedValue === 'cours') {
+                document.getElementById('cours-details').classList.add('active');
+            } else if (selectedValue === 'paiement') {
+                document.getElementById('paiement-details').classList.add('active');
+            }
+        });
+
+        // Barre de progression
+        form.addEventListener('input', () => {
+            const totalFields = form.querySelectorAll('input, textarea, select').length;
+            const filledFields = Array.from(form.querySelectorAll('input, textarea, select')).filter(input => input.value.trim() !== '').length;
+            const progressPercentage = (filledFields / totalFields) * 100;
+
+            progressBar.style.width = `${progressPercentage}%`;
+        });
+
+        // Confirmation avant envoi
+        submitBtn.addEventListener('click', () => {
+            if (form.checkValidity()) {
+                confirmationMessage.style.display = 'block';
+                form.reset();
+                progressBar.style.width = '0';
+                setTimeout(() => {
+                    confirmationMessage.style.display = 'none';
+                }, 3000);
+            } else {
+                alert('Veuillez remplir tous les champs obligatoires.');
+            }
+        });
+    </script>
+</body>
+</html>
