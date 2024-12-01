@@ -14,6 +14,12 @@
 
         <label for="lastname">Last Name:</label>
         <input type="text" name="lastname" id="lastname" required><br><br>
+
+        <label for="lastname">Date of birth:</label>
+        <input type="date" name="dateOfBirth" id="dateOfBirth" required><br><br>
+
+        <label for="lastname">Phone number:</label>
+        <input type="text" name="phonenumber" id="phonenumber" required><br><br>
         
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required><br><br>
@@ -30,6 +36,7 @@
         
         <input type="submit" value="Sign Up">
     </form>
+    <a href="./login.php">Login</a><br><br>
     <a href="../../index.html">Back to Home</a>
 </body>
 </html>

@@ -1,5 +1,4 @@
 <?php
-// Include the database connection
 include '../connect.php';
 
 // Check if the form is submitted
@@ -9,15 +8,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $role = $_POST['role']; // Get the selected role from the form
+    $dateOfBirth = $_POST['dateOfBirth']; // Capture the date of birth
+    $phonenumber = $_POST['phonenumber']; // Capture the phone number
+    $role = $_POST['role'];  // Capture the role
 
     // Hash the password before storing it for security
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     try {
         // Prepare the SQL query to insert user data
-        $sql = "INSERT INTO user (firstname, lastname, email, password, role) 
-                VALUES (:firstname, :lastname, :email, :password, :role)";
+        $sql = "INSERT INTO user (firstname, lastname, email, password, role, dateOfBirth, phonenumber) 
+                VALUES (:firstname, :lastname, :email, :password, :role, :dateOfBirth, :phonenumber)";
         
         // Prepare the statement
         $stmt = $conn->prepare($sql);
@@ -27,7 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':role', $role); // Bind the role parameter
+        $stmt->bindParam(':dateOfBirth', $dateOfBirth);  // Bind the date of birth
+        $stmt->bindParam(':phonenumber', $phonenumber);  // Bind the phone number
+        $stmt->bindParam(':role', $role);  // Bind the role
         
         // Execute the query
         $stmt->execute();
