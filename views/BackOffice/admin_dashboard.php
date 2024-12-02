@@ -1,14 +1,15 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header('Location: ../login.html');
-    exit;
-}
 
 require_once '../../connect.php';
 
 require_once '../../controllers/user_controller.php';
+
+session_start();
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header('Location: ../../controllers/login.php');
+    exit;
+}
 
 try {
 
@@ -48,7 +49,7 @@ try {
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="text-center">User Management</h2>
-            <a href="../logout.php" class="btn btn-secondary">Logout</a>
+            <a href="../../controllers/logout.php" class="btn btn-secondary">Logout</a>
         </div>
 
         <div class="table-responsive">
@@ -82,8 +83,8 @@ try {
                                 <td><?php echo htmlspecialchars($user->getPhoneNumber()); ?></td>
                                 <td>
                                     <div class="d-flex gap-2">
-                                        <a href="update_user.php?id=<?php echo $user->getIdUser(); ?>" class="btn btn-primary btn-sm">Update</a>
-                                        <a href="delete_user.php?id=<?php echo $user->getIdUser(); ?>" 
+                                        <a href="./update_user.php?id=<?php echo $user->getIdUser(); ?>" class="btn btn-primary btn-sm">Update</a>
+                                        <a href="./delete_user.php?id=<?php echo $user->getIdUser(); ?>" 
                                            class="btn btn-danger btn-sm"
                                            onclick="return confirm('Are you sure you want to delete this user?');">
                                            Delete

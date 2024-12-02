@@ -57,13 +57,15 @@ class UserController {
             $users = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $users[] = new User(
+                    
                     $row['firstname'],
                     $row['lastname'],
                     $row['email'],
                     $row['dateOfBirth'],
                     $row['password'],
                     $row['role'],
-                    $row['id']
+                    $row['phoneNumber'],
+                    $row['id'],
                 );
             }
             return $users;
