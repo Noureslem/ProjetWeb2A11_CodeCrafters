@@ -6,13 +6,15 @@ session_start();
 
 $admin_id = $_SESSION['admin_id'];
 
-if(!isset($admin_id)){
+if (!isset($admin_id)) {
    header('location:login.php');
-};
+   exit;
+}
 
-if(isset($_GET['delete'])){
+if (isset($_GET['delete'])) {
    $delete_id = $_GET['delete'];
-   mysqli_query($conn, "DELETE FROM `message` WHERE id = '$delete_id'") or die('query failed');
+   $delete_message = $conn->prepare("DELETE FROM `message` WHERE id = :id");
+   $delete_message->execute([':id' => $delete_id]);
    header('location:admin_contacts.php');
 }
 
@@ -43,10 +45,11 @@ if(isset($_GET['delete'])){
 
    <div class="box-container">
    <?php
-      $select_message = mysqli_query($conn, "SELECT * FROM `message`") or die('query failed');
-      if(mysqli_num_rows($select_message) > 0){
-         while($fetch_message = mysqli_fetch_assoc($select_message)){
-      
+      $select_message = $conn->prepare("SELECT * FROM `message`");
+      $select_message->execute();
+
+      if ($select_message->rowCount() > 0) {
+         while ($fetch_message = $select_message->fetch(PDO::FETCH_ASSOC)) {
    ?>
    <div class="box">
       <p> user id : <span><?php echo $fetch_message['user_id']; ?></span> </p>
@@ -57,22 +60,14 @@ if(isset($_GET['delete'])){
       <a href="admin_contacts.php?delete=<?php echo $fetch_message['id']; ?>" onclick="return confirm('delete this message?');" class="delete-btn">delete message</a>
    </div>
    <?php
-      };
-   }else{
-      echo '<p class="empty">you have no messages!</p>';
-   }
+         }
+      } else {
+         echo '<p class="empty">you have no messages!</p>';
+      }
    ?>
    </div>
 
 </section>
-
-
-
-
-
-
-
-
 
 <!-- custom admin js file link  -->
 <script src="js/admin_script.js"></script>

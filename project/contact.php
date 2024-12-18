@@ -12,17 +12,31 @@ if(!isset($user_id)){
 
 if(isset($_POST['send'])){
 
-   $name = mysqli_real_escape_string($conn, $_POST['name']);
-   $email = mysqli_real_escape_string($conn, $_POST['email']);
+   $name = $_POST['name'];
+   $email = $_POST['email'];
    $number = $_POST['number'];
-   $msg = mysqli_real_escape_string($conn, $_POST['message']);
+   $msg = $_POST['message'];
 
-   $select_message = mysqli_query($conn, "SELECT * FROM `message` WHERE name = '$name' AND email = '$email' AND number = '$number' AND message = '$msg'") or die('query failed');
+   // Using PDO for database interaction
+   $select_message = $conn->prepare("SELECT * FROM `message` WHERE name = :name AND email = :email AND number = :number AND message = :message");
+   $select_message->execute([
+      ':name' => $name,
+      ':email' => $email,
+      ':number' => $number,
+      ':message' => $msg
+   ]);
 
-   if(mysqli_num_rows($select_message) > 0){
+   if($select_message->rowCount() > 0){
       $message[] = 'message sent already!';
    }else{
-      mysqli_query($conn, "INSERT INTO `message`(user_id, name, email, number, message) VALUES('$user_id', '$name', '$email', '$number', '$msg')") or die('query failed');
+      $insert_message = $conn->prepare("INSERT INTO `message`(user_id, name, email, number, message) VALUES(:user_id, :name, :email, :number, :message)");
+      $insert_message->execute([
+         ':user_id' => $user_id,
+         ':name' => $name,
+         ':email' => $email,
+         ':number' => $number,
+         ':message' => $msg
+      ]);
       $message[] = 'message sent successfully!';
    }
 
@@ -66,13 +80,6 @@ if(isset($_POST['send'])){
    </form>
 
 </section>
-
-
-
-
-
-
-
 
 <?php include 'footer.php'; ?>
 

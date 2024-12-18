@@ -4,21 +4,33 @@ include 'config.php';
 
 if(isset($_POST['submit'])){
 
-   $name = mysqli_real_escape_string($conn, $_POST['name']);
-   $email = mysqli_real_escape_string($conn, $_POST['email']);
-   $pass = mysqli_real_escape_string($conn, md5($_POST['password']));
-   $cpass = mysqli_real_escape_string($conn, md5($_POST['cpassword']));
+   $name = $_POST['name'];
+   $email = $_POST['email'];
+   $pass = md5($_POST['password']);
+   $cpass = md5($_POST['cpassword']);
    $user_type = $_POST['user_type'];
 
-   $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE email = '$email' AND password = '$pass'") or die('query failed');
+   // Using PDO to check if the user already exists
+   $select_users = $conn->prepare("SELECT * FROM `users` WHERE email = :email AND password = :password");
+   $select_users->execute([
+      ':email' => $email,
+      ':password' => $pass
+   ]);
 
-   if(mysqli_num_rows($select_users) > 0){
-      $message[] = 'user already exist!';
+   if($select_users->rowCount() > 0){
+      $message[] = 'user already exists!';
    }else{
       if($pass != $cpass){
          $message[] = 'confirm password not matched!';
       }else{
-         mysqli_query($conn, "INSERT INTO `users`(name, email, password, user_type) VALUES('$name', '$email', '$cpass', '$user_type')") or die('query failed');
+         // Using PDO to insert the new user
+         $insert_user = $conn->prepare("INSERT INTO `users`(name, email, password, user_type) VALUES(:name, :email, :password, :user_type)");
+         $insert_user->execute([
+            ':name' => $name,
+            ':email' => $email,
+            ':password' => $cpass,
+            ':user_type' => $user_type
+         ]);
          $message[] = 'registered successfully!';
          header('location:login.php');
       }
@@ -45,8 +57,6 @@ if(isset($_POST['submit'])){
 </head>
 <body>
 
-
-
 <?php
 if(isset($message)){
    foreach($message as $message){
@@ -59,7 +69,7 @@ if(isset($message)){
    }
 }
 ?>
-   
+
 <div class="form-container">
 
    <form action="" method="post">

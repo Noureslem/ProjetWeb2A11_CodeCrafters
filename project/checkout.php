@@ -12,19 +12,22 @@ if(!isset($user_id)){
 
 if(isset($_POST['order_btn'])){
 
-   $name = mysqli_real_escape_string($conn, $_POST['name']);
+   $name = $_POST['name'];
    $number = $_POST['number'];
-   $email = mysqli_real_escape_string($conn, $_POST['email']);
-   $method = mysqli_real_escape_string($conn, $_POST['method']);
-   $address = mysqli_real_escape_string($conn, 'flat no. '. $_POST['flat'].', '. $_POST['street'].', '. $_POST['city'].', '. $_POST['country'].' - '. $_POST['pin_code']);
+   $email = $_POST['email'];
+   $method = $_POST['method'];
+   $address = 'flat no. '. $_POST['flat'].', '. $_POST['street'].', '. $_POST['city'].', '. $_POST['country'].' - '. $_POST['pin_code'];
    $placed_on = date('d-M-Y');
 
    $cart_total = 0;
-   $cart_products[] = '';
+   $cart_products = [];
 
-   $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-   if(mysqli_num_rows($cart_query) > 0){
-      while($cart_item = mysqli_fetch_assoc($cart_query)){
+   // Fetch cart items
+   $cart_query = $conn->prepare("SELECT * FROM `cart` WHERE user_id = :user_id");
+   $cart_query->execute([':user_id' => $user_id]);
+
+   if($cart_query->rowCount() > 0){
+      while($cart_item = $cart_query->fetch(PDO::FETCH_ASSOC)){
          $cart_products[] = $cart_item['name'].' ('.$cart_item['quantity'].') ';
          $sub_total = ($cart_item['price'] * $cart_item['quantity']);
          $cart_total += $sub_total;
@@ -33,17 +36,42 @@ if(isset($_POST['order_btn'])){
 
    $total_products = implode(', ',$cart_products);
 
-   $order_query = mysqli_query($conn, "SELECT * FROM `orders` WHERE name = '$name' AND number = '$number' AND email = '$email' AND method = '$method' AND address = '$address' AND total_products = '$total_products' AND total_price = '$cart_total'") or die('query failed');
+   // Check if the order already exists
+   $order_query = $conn->prepare("SELECT * FROM `orders` WHERE name = :name AND number = :number AND email = :email AND method = :method AND address = :address AND total_products = :total_products AND total_price = :total_price");
+   $order_query->execute([
+      ':name' => $name,
+      ':number' => $number,
+      ':email' => $email,
+      ':method' => $method,
+      ':address' => $address,
+      ':total_products' => $total_products,
+      ':total_price' => $cart_total
+   ]);
 
    if($cart_total == 0){
       $message[] = 'your cart is empty';
    }else{
-      if(mysqli_num_rows($order_query) > 0){
+      if($order_query->rowCount() > 0){
          $message[] = 'order already placed!'; 
       }else{
-         mysqli_query($conn, "INSERT INTO `orders`(user_id, name, number, email, method, address, total_products, total_price, placed_on) VALUES('$user_id', '$name', '$number', '$email', '$method', '$address', '$total_products', '$cart_total', '$placed_on')") or die('query failed');
+         // Insert the new order
+         $insert_order = $conn->prepare("INSERT INTO `orders`(user_id, name, number, email, method, address, total_products, total_price, placed_on) VALUES(:user_id, :name, :number, :email, :method, :address, :total_products, :total_price, :placed_on)");
+         $insert_order->execute([
+            ':user_id' => $user_id,
+            ':name' => $name,
+            ':number' => $number,
+            ':email' => $email,
+            ':method' => $method,
+            ':address' => $address,
+            ':total_products' => $total_products,
+            ':total_price' => $cart_total,
+            ':placed_on' => $placed_on
+         ]);
          $message[] = 'order placed successfully!';
-         mysqli_query($conn, "DELETE FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
+
+         // Clear the cart
+         $clear_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = :user_id");
+         $clear_cart->execute([':user_id' => $user_id]);
       }
    }
    
@@ -79,9 +107,11 @@ if(isset($_POST['order_btn'])){
 
    <?php  
       $grand_total = 0;
-      $select_cart = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-      if(mysqli_num_rows($select_cart) > 0){
-         while($fetch_cart = mysqli_fetch_assoc($select_cart)){
+      $select_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = :user_id");
+      $select_cart->execute([':user_id' => $user_id]);
+
+      if($select_cart->rowCount() > 0){
+         while($fetch_cart = $select_cart->fetch(PDO::FETCH_ASSOC)){
             $total_price = ($fetch_cart['price'] * $fetch_cart['quantity']);
             $grand_total += $total_price;
    ?>
@@ -151,14 +181,6 @@ if(isset($_POST['order_btn'])){
    </form>
 
 </section>
-
-
-
-
-
-
-
-
 
 <?php include 'footer.php'; ?>
 

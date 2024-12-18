@@ -6,23 +6,32 @@ session_start();
 
 $admin_id = $_SESSION['admin_id'];
 
-if(!isset($admin_id)){
+if (!isset($admin_id)) {
    header('location:login.php');
+   exit;
 }
 
-if(isset($_POST['update_order'])){
-
+if (isset($_POST['update_order'])) {
    $order_update_id = $_POST['order_id'];
    $update_payment = $_POST['update_payment'];
-   mysqli_query($conn, "UPDATE `orders` SET payment_status = '$update_payment' WHERE id = '$order_update_id'") or die('query failed');
-   $message[] = 'payment status has been updated!';
 
+   $update_order = $conn->prepare("UPDATE `orders` SET payment_status = :payment_status WHERE id = :id");
+   $update_order->execute([
+      ':payment_status' => $update_payment,
+      ':id' => $order_update_id
+   ]);
+
+   $message[] = 'payment status has been updated!';
 }
 
-if(isset($_GET['delete'])){
+if (isset($_GET['delete'])) {
    $delete_id = $_GET['delete'];
-   mysqli_query($conn, "DELETE FROM `orders` WHERE id = '$delete_id'") or die('query failed');
+
+   $delete_order = $conn->prepare("DELETE FROM `orders` WHERE id = :id");
+   $delete_order->execute([':id' => $delete_id]);
+
    header('location:admin_orders.php');
+   exit;
 }
 
 ?>
@@ -52,9 +61,11 @@ if(isset($_GET['delete'])){
 
    <div class="box-container">
       <?php
-      $select_orders = mysqli_query($conn, "SELECT * FROM `orders`") or die('query failed');
-      if(mysqli_num_rows($select_orders) > 0){
-         while($fetch_orders = mysqli_fetch_assoc($select_orders)){
+      $select_orders = $conn->prepare("SELECT * FROM `orders`");
+      $select_orders->execute();
+
+      if ($select_orders->rowCount() > 0) {
+         while ($fetch_orders = $select_orders->fetch(PDO::FETCH_ASSOC)) {
       ?>
       <div class="box">
          <p> user id : <span><?php echo $fetch_orders['user_id']; ?></span> </p>
@@ -63,7 +74,7 @@ if(isset($_GET['delete'])){
          <p> number : <span><?php echo $fetch_orders['number']; ?></span> </p>
          <p> email : <span><?php echo $fetch_orders['email']; ?></span> </p>
          <p> address : <span><?php echo $fetch_orders['address']; ?></span> </p>
-         <p> total products : <span><?php echo $fetch_orders['total_products']; ?></span> </p>
+         <p> total Courses : <span><?php echo $fetch_orders['total_products']; ?></span> </p>
          <p> total price : <span>$<?php echo $fetch_orders['total_price']; ?>/-</span> </p>
          <p> payment method : <span><?php echo $fetch_orders['method']; ?></span> </p>
          <form action="" method="post">
@@ -79,22 +90,13 @@ if(isset($_GET['delete'])){
       </div>
       <?php
          }
-      }else{
+      } else {
          echo '<p class="empty">no orders placed yet!</p>';
       }
       ?>
    </div>
 
 </section>
-
-
-
-
-
-
-
-
-
 
 <!-- custom admin js file link  -->
 <script src="js/admin_script.js"></script>

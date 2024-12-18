@@ -6,27 +6,38 @@ session_start();
 
 $user_id = $_SESSION['user_id'];
 
-if(!isset($user_id)){
+if (!isset($user_id)) {       // thabet feha
    header('location:login.php');
+   exit;
 };
 
-if(isset($_POST['add_to_cart'])){
+if (isset($_POST['add_to_cart'])) {
 
    $product_name = $_POST['product_name'];
    $product_price = $_POST['product_price'];
    $product_image = $_POST['product_image'];
    $product_quantity = $_POST['product_quantity'];
 
-   $check_cart_numbers = mysqli_query($conn, "SELECT * FROM `cart` WHERE name = '$product_name' AND user_id = '$user_id'") or die('query failed');
+   $check_cart_numbers = $conn->prepare("SELECT * FROM `cart` WHERE name = :name AND user_id = :user_id");
+   $check_cart_numbers->execute([
+      ':name' => $product_name,
+      ':user_id' => $user_id
+   ]);
 
-   if(mysqli_num_rows($check_cart_numbers) > 0){
+   if ($check_cart_numbers->rowCount() > 0) {
       $message[] = 'already added to cart!';
-   }else{
-      mysqli_query($conn, "INSERT INTO `cart`(user_id, name, price, quantity, image) VALUES('$user_id', '$product_name', '$product_price', '$product_quantity', '$product_image')") or die('query failed');
+   } else {
+      $add_to_cart = $conn->prepare("INSERT INTO `cart`(user_id, name, price, quantity, image) VALUES(:user_id, :name, :price, :quantity, :image)");
+      $add_to_cart->execute([
+         ':user_id' => $user_id,
+         ':name' => $product_name,
+         ':price' => $product_price,
+         ':quantity' => $product_quantity,
+         ':image' => $product_image
+      ]);
       $message[] = 'product added to cart!';
    }
-
-};
+}
 
 ?>
 
@@ -65,11 +76,12 @@ if(isset($_POST['add_to_cart'])){
 
    <div class="box-container">
    <?php
-      if(isset($_POST['submit'])){
+      if (isset($_POST['submit'])) {
          $search_item = $_POST['search'];
-         $select_products = mysqli_query($conn, "SELECT * FROM `products` WHERE name LIKE '%{$search_item}%'") or die('query failed');
-         if(mysqli_num_rows($select_products) > 0){
-         while($fetch_product = mysqli_fetch_assoc($select_products)){
+         $select_products = $conn->prepare("SELECT * FROM `products` WHERE name LIKE :search_item");
+         $select_products->execute([':search_item' => '%' . $search_item . '%']);
+         if ($select_products->rowCount() > 0) {
+            while ($fetch_product = $select_products->fetch(PDO::FETCH_ASSOC)) {
    ?>
    <form action="" method="post" class="box">
       <img src="uploaded_img/<?php echo $fetch_product['image']; ?>" alt="" class="image">
@@ -83,25 +95,17 @@ if(isset($_POST['add_to_cart'])){
    </form>
    <?php
             }
-         }else{
+         } else {
             echo '<p class="empty">no result found!</p>';
          }
-      }else{
+      } else {
          echo '<p class="empty">search something!</p>';
       }
    ?>
-   </div>
+   </div>   
   
 
 </section>
-
-
-
-
-
-
-
-
 
 <?php include 'footer.php'; ?>
 
